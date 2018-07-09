@@ -30,6 +30,7 @@ class Tile:
 		self.tileNum = self.setTileNumber()
 		self.vOwner = [(0,0),(0,0),(0,0),(0,0),(0,0),(0,0)]
 		self.eOwner = [0,0,0,0,0,0]
+		print self.eOwner
 		self.eNeigh = self.getENeigh()
 		self.vNeigh = self.getVNeigh()	
 	

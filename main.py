@@ -37,6 +37,7 @@ class Game_Window():
 		self.board.tiles[ self.board.getTileIndex(5) ].vOwner[2] = (2,1)
 	
 	def update(self):	
+		self.board.update()
 		self.draw()
 		pygame.display.update()
 	
@@ -65,12 +66,6 @@ class Game_Window():
 									if edge >= 0:
 										if self.board.checkRoadB(tile.tileNum, edge, player):
 											tile.eOwner[edge] = player[0]
-											neigh = tile.eNeigh[edge]
-											# communicate owner
-											if neigh > 0:
-												ind = self.board.getTileIndex(neigh)
-												self.board.tiles[ind].eOwner[ self.board.convertEdge(edge) ] = player[0]
-											self.building = -1
 						elif event.button == 3:
 							self.building = -1
 						else:

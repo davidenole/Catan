@@ -15,7 +15,8 @@ class Board:
 	
 		# tiles
 		self.tiles = self.createBoard()
-		
+		self.vOwner = [[0]*6]*len(self.tiles)
+		self.eOwner = [[(0,0)]*6]*len(self.tiles)
 		
 	
 	# creates the initial board
@@ -97,7 +98,59 @@ class Board:
 				elif ntile.eOwner[ed] == pl and tile.vOwner[e] == (0,0):
 					return True
 			return False
+
+	# checks if player "pl" can build a settlement in tile
+	# number "tn" on vertex "v"
+	def checkSettB(self, tn, v, pl):
+		tile = self.tiles[ self.getTileIndex(tn) ]
+		pl = pl[0]
+		# already occupied
+		if tile.vOwner[v][0] != 0:
+			return False
+		# no cities 1 edge apart
+		elif tile.vOwner[mod6(v+1)][0] != 0 or tile.vOwner[mod6(v-1)][0] != 0:
+			return False
+		neigh = tile.vNeigh[v][0]
+		if neigh == 0:
+			neigh = tile.vNeigh[v][1]
+			if neigh != 0:
+				ind = self.getTileIndex(neigh)
+				ntile = self.tiles[ntile]
+				if tile.vOwner[mod6(v+1)][0] != 0:
+					return False
+		else:
+			ind = self.getTileIndex(neigh)
+			ntile = self.tiles[ntile]
+			if tile.vOwner[mod6(v-1)][0] != 0:
+				return False
+		# there are at least 2 roads leading to this place
+		# ( it is assumed roads generate from something )
+		# ( rules state interrupted roads count anyway )
+	
+	# update owners of the edges and vertices
+	def update(self):
+		# edges
+		newEds = []
+		for tile in self.tiles:
+			newEds.append( tile.eOwner )
+		if newEds != self.eOwner:
+			#update owners
+			t = self.diff(newEds, self.eOwner)
+			e = self.diff(newEds[t], self.eOwner[t])
+			neigh = self.tiles[t].eNeigh[e]
+			if neigh > 0:
+				ind = self.getTileIndex(neigh)
+				self.tiles[ind].eOwner[ self.convertEdge(e) ] = newEds[t][e]
+			self.eOwner = newEds
+		# vertices
+		# ...
 						
+	# outputs the position of the difference in a list
+	def diff(self,l1,l2):
+		for i in range(len(l1)):
+			if l1[i] != l2[i]:
+				return i			
+
 	# draw board on screen
 	def draw(self, screen, players):
 		for tile in self.tiles:
